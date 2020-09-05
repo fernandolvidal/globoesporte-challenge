@@ -1,0 +1,28 @@
+DESCRIÇÃO DOS SCRIPTS IDEIAS E CONCLUSÕES:
+
+
+1_20180924_PREPROC_BD_DEM_TIME
+Análise exploratória dos dados de Usuários. Padronização e verificação de hipóteses.
+
+
+2_20180924_PREPROC_BD_CONSUMO
+Análise exploratória dos dados de Consumo. Padronização e verificação de hipóteses. Por final, construção dos atributos e reformatação. 
+
+
+3_20180924_MERGE_BD_DEM_TIME_CONSUMO
+União das duas bases geradas pelo pré-processamento executado pelos dois scripts acima. Gera o insumo que alimenta os modelos clássicos de aprendizado de máquina. 
+
+
+4.0_20180925_ANALYSIS_ML_NORMALIZED
+Compara a aplicação do classificador SVC (Support Vector Classifier) em duas abordagens. Nesse caso, o insumo possui tanto informações dos tempos gastos em cada time (gerado pelo 2_20180924_PREPROC_BD_CONSUMO) quanto informações pessoais dos usuários. Como os atributos possuem dimensões muito diferentes, as abordagens comparam a aplicação de dois normalizadores sobre os atributos, Normalizer() e MinMaxScaler(). O primeiro transforma a população (todos os valores naquela coluna) para uma distribuição normal de média 0 e desvio padrão 1. O segundo transforma a população para valores um intervalo de 0 a 1 baseado em uma regra de três com os valores mínimos e máximos daquela coluna. Sem resultados significativos.
+
+
+4.1_20180925_ANALYSIS_ML_BALANCED_SAMPLE
+Análise baseada nas hipóteses de que a escolha do classificador não foi, os atributos não foram adequados e de um possível problema de balanceamento de classes (muito mais observações de flamenguistas do que de torcedores do sport, por exemplo).
+Para a escolha do classificador, decidiu-se comparar diferentes classificadores (SVC, KNN, DT, LR). Para a escolha dos atributos, optou-se pelo uso da técnica de PermutationImportance, sobre os classificadores acima. Esta técnica pega cada atributo e atribui a ele valores aleatórios, e verifica o quanto isso impacta na métrica de avaliação do modelo. Atributos que assumiram valores aleatórios e pioraram a métrica, são considerados úteis (verde). A idéia é avaliar esses atributos para excluir os que não impactam ou impactam negativamente, reduzinho a dimensionalidade dos seus dados. Quanto ao desbalanceamento, foi aplicada a técnica de Undersampling (exclusão de registros de classes dominantes). Comparou-se a aplicação desses classificadores aos dados re-balanceados, com e sem os atributos não relevantes e se obteve uma acurácia de 62% sobre os dados de teste re-balanceados na Regressão Logística (LR). Desses modelos, escolheu-se para teste com a base completa de teste o melhor modelo gerado pelos dados re-balanceados de treino (LR) e o modelo de árvore de decisão (DT). O modelo de árvore não foi o segundo melhor modelo segundo a métrica, no entanto, foi escolhido por ter um tempo de previsão muito mais rápido que o segundo colocado, os K-Vizinhos (KNN), e uma acurácia próxima de 50%. A previsão sobre a base completa de teste reduziu muito as métricas de avaliação dos classificadores, obtendo resultados piores no primeiro colocado (LR) quando comparado ao terceiro colocado (DT). Sem resultados significativos, visto que o melhor resultado obtido sobre a base de teste completa fora de 20% na árvore de decisão, apenas 5% melhor que o baseline definido pelo processo de Random Guessing (assume-se que todos as observações de teste pertencem à classe dominante, ou seja, todos são flamenguistas).    
+
+4.2_20180926_ANALYSIS_ML_KERAS_NN
+Como última tentativa de gerar um modelo preditivo com aprendizado de máquina devido ao prazo, optou-se por aplicar redes neurais para classificação multiclasse. Utilizou-se validação cruzada K-fold para todos os dados (teste + treino). Foi delegado à função decidir como dividir os dados entre treino e teste e testar o modelo de redes neurais. Modelos de aprendizado profundo tendem a resolver problemas quando os classificadores clássicos não resolvem, entretanto, possuem desvantagens como o tempo de treinamento e baixa interpretabilidade. Sem resultados significativos. Após todo esse processo de análise, portanto, optou-se por implementar o modelo intuitivo.
+
+FINAL_Ponta-Ponta
+Script do modelo intuitivo. Basicamente é uma compilação das funcionalidades dos scripts de pré-processamento organizados para leitura, padronização, formatação, geração de atributos, união e previsão. Parte do pressuposto que o usuário deve torcer para o time em que ele mais perde tempo lendo notícias a respeito. Obteve uma acurácia de 70% sobre todos os dados. Não é um modelo baseado em inteligência artificial. É rápido, possui alta interpretabilidade (facilidade em explicar o mesmo) e obteve de longe o melhor resultado. 
